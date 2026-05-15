@@ -187,6 +187,7 @@
 
   window.tick = function(cb, id, pts) {
     const card = document.getElementById(id);
+    if (!state.clues) state.clues = {};
     if (cb.checked) {
       card.classList.add('done');
       if (!state.clues[id]) {

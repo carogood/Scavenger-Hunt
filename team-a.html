@@ -190,6 +190,7 @@
   window.tick = function(cb, id, pts) {
     const card = document.getElementById(id);
     // Update local state immediately for responsive feel
+    if (!state.clues) state.clues = {};
     if (cb.checked) {
       card.classList.add('done');
       if (!state.clues[id]) {
