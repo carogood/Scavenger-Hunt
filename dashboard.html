@@ -6,7 +6,14 @@
 <title>Scavenger Hunt — Live Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --orange: #FF5C1A; --yellow: #FFD600; --teal: #00BFA6; --dark: #111111; --paper: #FFF8EF; --ink: #1A1A1A; }
+  :root {
+    --orange: #FF5C1A;
+    --yellow: #FFD600;
+    --teal: #00BFA6;
+    --dark: #111111;
+    --paper: #FFF8EF;
+    --ink: #1A1A1A;
+  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--dark); font-family: 'DM Sans', sans-serif; color: #fff; min-height: 100vh; }
 
@@ -33,14 +40,6 @@
   .score-big.bump { transform: scale(1.2); }
   .score-big-label { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); text-align: right; margin-top: -.1rem; }
   .score-card-body { padding: 1rem 1.2rem; }
-
-  .members-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .9rem; min-height: 1.5rem; }
-  .member-bubble { display: flex; align-items: center; gap: .35rem; background: rgba(255,255,255,.07); border-radius: 999px; padding: .25rem .6rem .25rem .3rem; }
-  .member-initial { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: .75rem; flex-shrink: 0; }
-  .member-initial.a { background: var(--orange); color: #fff; }
-  .member-initial.b { background: var(--teal); color: #fff; }
-  .member-name { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.7); }
-
   .progress-row { display: flex; justify-content: space-between; font-size: .75rem; color: rgba(255,255,255,.5); margin-bottom: .4rem; }
   .prog-track { height: 6px; background: rgba(255,255,255,.1); border-radius: 999px; overflow: hidden; }
   .prog-fill-a { height: 100%; background: var(--orange); border-radius: 999px; transition: width .6s ease; width: 0%; }
@@ -54,8 +53,8 @@
   .versus-label { font-family: 'Bebas Neue', sans-serif; font-size: .8rem; letter-spacing: .2em; color: rgba(255,255,255,.3); text-align: center; margin-bottom: .6rem; }
   .versus-bar-wrap { display: flex; align-items: center; gap: .5rem; }
   .versus-bar-track { flex: 1; height: 12px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; display: flex; }
-  .versus-fill-a { height: 100%; background: var(--orange); transition: width .6s ease; }
-  .versus-fill-b { height: 100%; background: var(--teal); transition: width .6s ease; }
+  .versus-fill-a { height: 100%; background: var(--orange); transition: width .6s ease; border-radius: 999px 0 0 999px; }
+  .versus-fill-b { height: 100%; background: var(--teal); transition: width .6s ease; border-radius: 0 999px 999px 0; }
   .versus-score-a { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--orange); width: 2.5rem; text-align: right; }
   .versus-score-b { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--teal); width: 2.5rem; }
 
@@ -83,51 +82,14 @@
   .penalty-input:focus { outline: none; border-color: var(--yellow); }
 
   .controls-section { max-width: 700px; margin: 0 auto; padding: 0 1rem 2rem; display: flex; gap: .75rem; flex-wrap: wrap; }
-  .ctrl-btn { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: .06em; padding: .6rem 1.4rem; border-radius: 8px; border: none; cursor: pointer; transition: transform .15s; }
-  .ctrl-btn:hover { transform: translateY(-1px); }
+  .ctrl-btn { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: .06em; padding: .6rem 1.4rem; border-radius: 8px; border: none; cursor: pointer; transition: transform .15s, opacity .15s; }
+  .ctrl-btn:hover { transform: translateY(-1px); opacity: .9; }
   .ctrl-btn.muted { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.12); }
-  .ctrl-btn.yellow { background: var(--yellow); color: var(--dark); }
-
-  /* NAMES SETUP */
-  #setup-overlay { position: fixed; inset: 0; background: #0a0a0a; z-index: 100; overflow-y: auto; display: none; flex-direction: column; align-items: center; padding: 2rem 1rem; }
-  #setup-overlay.open { display: flex; }
-  .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--yellow); text-align: center; margin-bottom: .3rem; }
-  .setup-sub { color: rgba(255,255,255,.4); font-size: .9rem; text-align: center; margin-bottom: 2rem; }
-  .setup-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; width: 100%; max-width: 600px; }
-  @media(max-width:500px){ .setup-teams { grid-template-columns: 1fr; } }
-  .setup-team { background: rgba(255,255,255,.05); border-radius: 14px; padding: 1.2rem; border: 1px solid rgba(255,255,255,.1); }
-  .setup-team-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; }
-  .setup-team-title.a { color: var(--orange); }
-  .setup-team-title.b { color: var(--teal); }
-  .setup-input-row { display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem; }
-  .setup-num { width: 24px; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: rgba(255,255,255,.3); text-align: center; }
-  .setup-input { flex: 1; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 8px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: .9rem; padding: .45rem .7rem; }
-  .setup-input:focus { outline: none; border-color: var(--yellow); }
-  .setup-input::placeholder { color: rgba(255,255,255,.25); }
-  .setup-save-btn { margin-top: 2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .1em; background: var(--yellow); color: var(--dark); border: none; border-radius: 10px; padding: .9rem 3rem; cursor: pointer; }
-  .setup-cancel { margin-top: .8rem; font-size: .8rem; color: rgba(255,255,255,.25); cursor: pointer; text-decoration: underline; }
 
   .last-update { text-align: center; font-size: .72rem; color: rgba(255,255,255,.2); padding: 1rem; }
 </style>
 </head>
 <body>
-
-<div id="setup-overlay">
-  <div class="setup-title">🏘️ Player Names</div>
-  <p class="setup-sub">5 players per team</p>
-  <div class="setup-teams">
-    <div class="setup-team">
-      <div class="setup-team-title a">🔴 Team A</div>
-      <div id="inputs-a"></div>
-    </div>
-    <div class="setup-team">
-      <div class="setup-team-title b">🟢 Team B</div>
-      <div id="inputs-b"></div>
-    </div>
-  </div>
-  <button class="setup-save-btn" id="save-btn">Save Names</button>
-  <div class="setup-cancel" id="cancel-btn">Cancel</div>
-</div>
 
 <div class="header">
   <div class="header-tag">🏘️ Aberdeen West End</div>
@@ -142,7 +104,6 @@
       <div><div class="score-big" id="score-a-big">0</div><div class="score-big-label">pts</div></div>
     </div>
     <div class="score-card-body">
-      <div class="members-row" id="members-a"></div>
       <div class="progress-row"><span id="clue-count-a">0 / 10 clues</span><span id="pct-a">0%</span></div>
       <div class="prog-track"><div class="prog-fill-a" id="prog-a"></div></div>
       <div class="clue-grid">
@@ -157,7 +118,6 @@
       <div><div class="score-big" id="score-b-big">0</div><div class="score-big-label">pts</div></div>
     </div>
     <div class="score-card-body">
-      <div class="members-row" id="members-b"></div>
       <div class="progress-row"><span id="clue-count-b">0 / 10 clues</span><span id="pct-b">0%</span></div>
       <div class="prog-track"><div class="prog-fill-b" id="prog-b"></div></div>
       <div class="clue-grid">
@@ -189,26 +149,25 @@
 
 <div class="bonus-tracker">
   <div class="section-title">⭐ Bonus Challenges</div>
-  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Aberdeen FC reference spotted</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="0" data-pts="5">A</button><button class="bonus-check-btn b" data-team="b" data-idx="0" data-pts="5">B</button></div></div>
-  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Stranger waves at camera</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="1" data-pts="5">A</button><button class="bonus-check-btn b" data-team="b" data-idx="1" data-pts="5">B</button></div></div>
-  <div class="bonus-row"><div class="bonus-pts-label">+10</div><div class="bonus-desc-text">Tourist guide video filmed</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="2" data-pts="10">A</button><button class="bonus-check-btn b" data-team="b" data-idx="2" data-pts="10">B</button></div></div>
-  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Named house nameplate found</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="3" data-pts="5">A</button><button class="bonus-check-btn b" data-team="b" data-idx="3" data-pts="5">B</button></div></div>
-  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Mossy granite wall found</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="4" data-pts="5">A</button><button class="bonus-check-btn b" data-team="b" data-idx="4" data-pts="5">B</button></div></div>
-  <div class="bonus-row"><div class="bonus-pts-label">+10</div><div class="bonus-desc-text">Different team member in front each photo</div><div class="bonus-checks"><button class="bonus-check-btn a" data-team="a" data-idx="5" data-pts="10">A</button><button class="bonus-check-btn b" data-team="b" data-idx="5" data-pts="10">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Aberdeen FC reference spotted</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',0,5)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',0,5)">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Stranger waves at camera</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',1,5)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',1,5)">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+10</div><div class="bonus-desc-text">Tourist guide video filmed</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',2,10)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',2,10)">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Named house nameplate found</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',3,5)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',3,5)">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+5</div><div class="bonus-desc-text">Mossy granite wall found</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',4,5)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',4,5)">B</button></div></div>
+  <div class="bonus-row"><div class="bonus-pts-label">+10</div><div class="bonus-desc-text">Different team member in front each photo</div><div class="bonus-checks"><button class="bonus-check-btn a" onclick="toggleBonus(this,'a',5,10)">A</button><button class="bonus-check-btn b" onclick="toggleBonus(this,'b',5,10)">B</button></div></div>
 </div>
 
 <div class="penalty-section">
   <div class="section-title">⏱ Time Penalties</div>
-  <div class="penalty-row"><div class="penalty-label">🔴 Team A — minutes late (every 5 min = –5 pts)</div><input class="penalty-input" type="number" id="late-a" min="0" value="0"></div>
-  <div class="penalty-row"><div class="penalty-label">🟢 Team B — minutes late (every 5 min = –5 pts)</div><input class="penalty-input" type="number" id="late-b" min="0" value="0"></div>
+  <div class="penalty-row"><div class="penalty-label">🔴 Team A — minutes late (every 5 min = –5 pts)</div><input class="penalty-input" type="number" id="late-a" min="0" value="0" oninput="recalc()"></div>
+  <div class="penalty-row"><div class="penalty-label">🟢 Team B — minutes late (every 5 min = –5 pts)</div><input class="penalty-input" type="number" id="late-b" min="0" value="0" oninput="recalc()"></div>
 </div>
 
 <div class="controls-section">
-  <button class="ctrl-btn yellow" id="edit-names-btn">✏️ Edit Player Names</button>
-  <button class="ctrl-btn muted" id="reset-btn">🗑 Reset All Scores</button>
+  <button class="ctrl-btn muted" onclick="resetAll()">🗑 Reset All Scores</button>
 </div>
 
-<div class="last-update" id="last-update">Connecting…</div>
+<div class="last-update" id="last-update">Connecting to Firebase…</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -227,26 +186,31 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  let stateA = null;
-  let stateB = null;
+  let teamAState = null;
+  let teamBState = null;
   let bonusA = [false,false,false,false,false,false];
   let bonusB = [false,false,false,false,false,false];
   const bonusValues = [5,5,10,5,5,10];
-  let namesA = ['Player 1','Player 2','Player 3','Player 4','Player 5'];
-  let namesB = ['Player 1','Player 2','Player 3','Player 4','Player 5'];
 
-  // ---- SCOREBOARD ----
-  function recalc() {
-    const baseA = stateA ? (stateA.totalScore || 0) : 0;
-    const baseB = stateB ? (stateB.totalScore || 0) : 0;
-    const doneA = stateA ? (stateA.doneCount || 0) : 0;
-    const doneB = stateB ? (stateB.doneCount || 0) : 0;
+  window.toggleBonus = function(btn, team, idx, pts) {
+    if (team === 'a') { bonusA[idx] = !bonusA[idx]; btn.classList.toggle('active', bonusA[idx]); }
+    else { bonusB[idx] = !bonusB[idx]; btn.classList.toggle('active', bonusB[idx]); }
+    recalc();
+  };
+
+  function getBonusTotal(arr) {
+    return arr.reduce((sum, active, i) => sum + (active ? bonusValues[i] : 0), 0);
+  }
+
+  window.recalc = function() {
+    const baseA = teamAState ? (teamAState.totalScore || 0) : 0;
+    const baseB = teamBState ? (teamBState.totalScore || 0) : 0;
+    const doneA = teamAState ? (teamAState.doneCount || 0) : 0;
+    const doneB = teamBState ? (teamBState.doneCount || 0) : 0;
     const lateA = parseInt(document.getElementById('late-a').value || 0);
     const lateB = parseInt(document.getElementById('late-b').value || 0);
-    const bA = bonusA.reduce((s,v,i) => s + (v ? bonusValues[i] : 0), 0);
-    const bB = bonusB.reduce((s,v,i) => s + (v ? bonusValues[i] : 0), 0);
-    const totalA = Math.max(0, baseA + bA + (doneA === 10 ? 20 : 0) - Math.floor(lateA/5)*5);
-    const totalB = Math.max(0, baseB + bB + (doneB === 10 ? 20 : 0) - Math.floor(lateB/5)*5);
+    const totalA = Math.max(0, baseA + getBonusTotal(bonusA) + (doneA===10?20:0) - Math.floor(lateA/5)*5);
+    const totalB = Math.max(0, baseB + getBonusTotal(bonusB) + (doneB===10?20:0) - Math.floor(lateB/5)*5);
 
     const elA = document.getElementById('score-a-big');
     const elB = document.getElementById('score-b-big');
@@ -271,8 +235,8 @@
     document.getElementById('vs-fill-b').style.width = combined > 0 ? (totalB/combined*100) + '%' : '50%';
 
     for (let i = 1; i <= 10; i++) {
-      const cA = stateA ? (stateA.clues || {}) : {};
-      const cB = stateB ? (stateB.clues || {}) : {};
+      const cA = teamAState ? (teamAState.clues || {}) : {};
+      const cB = teamBState ? (teamBState.clues || {}) : {};
       document.getElementById('pip-a-' + i).classList.toggle('done-a', !!cA['c' + i]);
       document.getElementById('pip-b-' + i).classList.toggle('done-b', !!cB['c' + i]);
     }
@@ -282,105 +246,33 @@
     banner.style.display = 'block';
     const wt = document.getElementById('winner-text');
     const wd = document.getElementById('winner-detail');
-    if (totalA > totalB) { wt.textContent = '🏆 Team A Leads!'; wd.textContent = totalA + ' pts vs ' + totalB + ' pts · gap: +' + (totalA - totalB); }
-    else if (totalB > totalA) { wt.textContent = '🏆 Team B Leads!'; wd.textContent = totalB + ' pts vs ' + totalA + ' pts · gap: +' + (totalB - totalA); }
+    if (totalA > totalB) { wt.textContent = '🏆 Team A Leads!'; wd.textContent = totalA + ' pts vs ' + totalB + ' pts · gap: +' + (totalA-totalB); }
+    else if (totalB > totalA) { wt.textContent = '🏆 Team B Leads!'; wd.textContent = totalB + ' pts vs ' + totalA + ' pts · gap: +' + (totalB-totalA); }
     else { wt.textContent = "🤝 It's a Tie!"; wd.textContent = 'Both on ' + totalA + ' pts'; }
-  }
+  };
 
-  // ---- FIREBASE ----
-  onValue(ref(db, 'teamA'), function(snapshot) {
-    stateA = snapshot.val();
+  onValue(ref(db, 'teamA'), (snapshot) => {
+    teamAState = snapshot.val();
     recalc();
     document.getElementById('last-update').textContent = 'Last update: ' + new Date().toLocaleTimeString('en-GB');
   });
 
-  onValue(ref(db, 'teamB'), function(snapshot) {
-    stateB = snapshot.val();
+  onValue(ref(db, 'teamB'), (snapshot) => {
+    teamBState = snapshot.val();
     recalc();
     document.getElementById('last-update').textContent = 'Last update: ' + new Date().toLocaleTimeString('en-GB');
   });
 
-  // ---- NAMES ----
-  function renderMembers() {
-    ['a','b'].forEach(function(t) {
-      const names = t === 'a' ? namesA : namesB;
-      document.getElementById('members-' + t).innerHTML = names.map(function(n) {
-        return '<div class="member-bubble"><div class="member-initial ' + t + '">' + n.charAt(0).toUpperCase() + '</div><div class="member-name">' + n + '</div></div>';
-      }).join('');
-    });
-  }
-
-  function buildInputs() {
-    ['a','b'].forEach(function(t) {
-      const names = t === 'a' ? namesA : namesB;
-      const container = document.getElementById('inputs-' + t);
-      container.innerHTML = '';
-      for (let i = 0; i < 5; i++) {
-        const row = document.createElement('div');
-        row.className = 'setup-input-row';
-        row.innerHTML = '<div class="setup-num">' + (i+1) + '</div><input class="setup-input" type="text" id="name-' + t + '-' + i + '" placeholder="Player ' + (i+1) + '" value="' + (names[i] || '') + '">';
-        container.appendChild(row);
-      }
-    });
-  }
-
-  document.getElementById('edit-names-btn').addEventListener('click', function() {
-    buildInputs();
-    document.getElementById('setup-overlay').classList.add('open');
-  });
-
-  document.getElementById('cancel-btn').addEventListener('click', function() {
-    document.getElementById('setup-overlay').classList.remove('open');
-  });
-
-  document.getElementById('save-btn').addEventListener('click', function() {
-    namesA = [];
-    namesB = [];
-    for (let i = 0; i < 5; i++) {
-      namesA.push(document.getElementById('name-a-' + i).value.trim() || 'Player ' + (i+1));
-      namesB.push(document.getElementById('name-b-' + i).value.trim() || 'Player ' + (i+1));
-    }
-    set(ref(db, 'config/names'), { namesA: namesA, namesB: namesB });
-    renderMembers();
-    document.getElementById('setup-overlay').classList.remove('open');
-  });
-
-  // Load saved names once
-  onValue(ref(db, 'config/names'), function(snapshot) {
-    const cfg = snapshot.val();
-    if (cfg && cfg.namesA) namesA = cfg.namesA;
-    if (cfg && cfg.namesB) namesB = cfg.namesB;
-    renderMembers();
-  }, { onlyOnce: true });
-
-  // ---- BONUS ----
-  document.querySelectorAll('.bonus-check-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const team = btn.dataset.team;
-      const idx = parseInt(btn.dataset.idx);
-      if (team === 'a') { bonusA[idx] = !bonusA[idx]; btn.classList.toggle('active', bonusA[idx]); }
-      else { bonusB[idx] = !bonusB[idx]; btn.classList.toggle('active', bonusB[idx]); }
-      recalc();
-    });
-  });
-
-  // ---- PENALTIES ----
-  document.getElementById('late-a').addEventListener('input', recalc);
-  document.getElementById('late-b').addEventListener('input', recalc);
-
-  // ---- RESET ----
-  document.getElementById('reset-btn').addEventListener('click', async function() {
+  window.resetAll = async function() {
     if (!confirm('Reset all scores?')) return;
     const empty = { clues: {}, totalScore: 0, doneCount: 0 };
     await Promise.all([set(ref(db, 'teamA'), empty), set(ref(db, 'teamB'), empty)]);
     bonusA = [false,false,false,false,false,false];
     bonusB = [false,false,false,false,false,false];
-    document.querySelectorAll('.bonus-check-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.bonus-check-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('late-a').value = 0;
     document.getElementById('late-b').value = 0;
-  });
-
-  renderMembers();
+  };
 </script>
 </body>
 </html>
