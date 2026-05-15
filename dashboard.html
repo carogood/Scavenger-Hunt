@@ -366,7 +366,8 @@
     feedItems.unshift({ team, title: clueTitles[clueId] || clueId, time: now });
     if (feedItems.length > 20) feedItems.pop();
     const list = document.getElementById('feed-list');
-    document.getElementById('feed-empty').style.display = 'none';
+    const emptyEl = document.getElementById('feed-empty');
+    if (emptyEl) emptyEl.style.display = 'none';
     list.innerHTML = feedItems.map(f => `
       <div class="feed-item">
         <div class="feed-dot ${f.team}"></div>
